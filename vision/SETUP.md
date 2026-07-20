@@ -5,9 +5,9 @@ Run all of this on the Raspberry Pi itself (SSH in), not on your Mac.
 ## 1. System packages
 ```
 sudo apt update
-sudo apt install -y python3-picamera2 espeak libatlas-base-dev unzip
+sudo apt install -y python3-picamera2 espeak-ng libatlas-base-dev unzip
 ```
-`espeak` is the voice engine `pyttsx3` drives on Linux. `python3-picamera2` must come from apt, not pip — it depends on system libcamera bindings that don't build cleanly through pip.
+`espeak-ng` is the voice engine — the script calls its command-line binary directly (`espeak-ng "text"`) rather than going through `pyttsx3`, since `pyttsx3`'s ctypes-based library lookup is unreliable on current Raspberry Pi OS/Python versions. `python3-picamera2` must come from apt, not pip — it depends on system libcamera bindings that don't build cleanly through pip.
 
 ## 2. Python environment
 `picamera2` only exists in system site-packages, so the venv needs `--system-site-packages` to see it:

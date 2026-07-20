@@ -1,4 +1,5 @@
 import argparse
+import subprocess
 import time
 
 import cv2
@@ -10,7 +11,9 @@ try:
 except ImportError:
     from tensorflow.lite.python.interpreter import Interpreter
 
-import pyttsx3
+
+def speak(text):
+    subprocess.run(["espeak-ng", text])
 
 
 def load_labels(path):
@@ -38,7 +41,6 @@ def main():
     _, input_height, input_width, _ = input_details[0]["shape"]
     is_floating_model = input_details[0]["dtype"] == np.float32
 
-    speaker = pyttsx3.init()
     last_said = {}
 
     picam2 = Picamera2()
@@ -77,8 +79,7 @@ def main():
 
                 if now - last_said.get(label, 0) > args.say_cooldown:
                     last_said[label] = now
-                    speaker.say(f"I can see a {label}.")
-                    speaker.runAndWait()
+                    speak(f"I can see a {label}.")
 
     except KeyboardInterrupt:
         pass
