@@ -30,6 +30,7 @@ def main():
     parser.add_argument("--labels", default="models/labelmap.txt")
     parser.add_argument("--threshold", type=float, default=0.5)
     parser.add_argument("--say-cooldown", type=float, default=5.0)
+    parser.add_argument("--headless", action="store_true", help="Don't open a preview window")
     args = parser.parse_args()
 
     labels = load_labels(args.labels)
@@ -49,10 +50,11 @@ def main():
     picam2.start()
     time.sleep(1)
 
-    print("Object recognition running. Ctrl+C to stop.")
+    print("Object recognition running. Ctrl+C to stop." if args.headless else "Object recognition running. Press 'q' in the preview window (or Ctrl+C) to stop.")
     try:
         while True:
             frame = picam2.capture_array()
+            frame_height, frame_width = frame.shape[:2]
             resized = cv2.resize(frame, (input_width, input_height))
             input_data = np.expand_dims(resized, axis=0)
 
@@ -81,10 +83,32 @@ def main():
                     last_said[label] = now
                     speak(f"I can see a {label}.")
 
+                if not args.headless:
+                    ymin, xmin, ymax, xmax = boxes[i]
+                    x1, y1 = int(xmin * frame_width), int(ymin * frame_height)
+                    x2, y2 = int(xmax * frame_width), int(ymax * frame_height)
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.putText(
+                        frame,
+                        f"{label} {score:.2f}",
+                        (x1, max(y1 - 8, 12)),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (0, 255, 0),
+                        2,
+                    )
+
+            if not args.headless:
+                cv2.imshow("Robot Vision", frame)
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    break
+
     except KeyboardInterrupt:
         pass
     finally:
         picam2.stop()
+        if not args.headless:
+            cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

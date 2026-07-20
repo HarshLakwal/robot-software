@@ -38,9 +38,11 @@ If that doesn't show a live preview / doesn't error out, fix the camera connecti
 cd ~/robot-software/vision
 python3 object_recognition.py
 ```
-It prints every detection above 0.5 confidence to the console and speaks each distinct object name once per 5-second cooldown (so it doesn't repeat "I can see a bottle" every frame). Tune with `--threshold` and `--say-cooldown`.
+It prints every detection above 0.5 confidence to the console, speaks each distinct object name once per 5-second cooldown (so it doesn't repeat "I can see a bottle" every frame), and opens a live preview window with bounding boxes drawn around whatever it detects. Tune with `--threshold` and `--say-cooldown`. Press `q` in the preview window (or Ctrl+C in the terminal) to stop.
+
+If you're running this over a plain SSH session with no desktop attached (no monitor, no Pi Connect/VNC), the preview window has nowhere to draw — pass `--headless` to skip it and stay console/speech-only.
 
 ## Known limits of this v1
 - No Coral accelerator yet, so expect a handful of FPS, not real-time video — fine for "walk into frame, get recognized," not for tracking fast motion.
-- Nothing is drawn to the 3.5" display yet — that's a follow-up once the display's GPIO pass-through question (from the wiring plan) is resolved and the screen is actually wired up.
+- The preview window is a temporary debugging aid — nothing is drawn to the robot's actual 3.5" display yet. That's a follow-up once the display's GPIO pass-through question (from the wiring plan) is resolved and the screen is actually wired up.
 - Runs in the foreground in a terminal; turning this into a background service/systemd unit is a later step once you're integrating it with the rest of the robot.
