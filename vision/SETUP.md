@@ -16,7 +16,7 @@ python3 -m venv --system-site-packages ~/venvs/robot
 source ~/venvs/robot/bin/activate
 pip install -r requirements.txt
 ```
-If `tflite-runtime` fails to install for your Python version, use `pip install tensorflow` instead — the script falls back to `tensorflow.lite` automatically.
+This uses full `tensorflow` for the TFLite interpreter — Google stopped publishing `tflite-runtime` wheels for current Python/Raspberry Pi OS versions, so that lighter package isn't installable anymore. `tensorflow` is a much bigger download, but piwheels has prebuilt ARM wheels for it so it won't compile from source — expect the install to take a while on first run, not to fail.
 
 ## 3. Get the detection model
 Standard COCO-trained SSD MobileNet V1 quantized model (fast enough for real-time-ish inference on a Pi 4 without an accelerator):
