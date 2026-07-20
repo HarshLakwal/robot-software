@@ -1,0 +1,4 @@
+tflite-runtime
+opencv-python-headless
+pyttsx3
+numpy
